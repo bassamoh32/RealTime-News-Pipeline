@@ -1,5 +1,5 @@
 .env
-./cassandra_utils/__pycache__/
+./cassandra_utils/__pycache__/*
 ./kafka/.env
 ./spark/checkpoints/
 ./spark/utils/cassandra_utils
