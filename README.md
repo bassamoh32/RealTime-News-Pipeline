@@ -24,7 +24,7 @@ bassamoh32-realtime-news-pipeline/
 │       ├── requirements.txt
 │       ├── spark_consumer.py # Spark streaming job consuming Kafka data
 │       └── spark_startup.sh  # Script to start Spark container
-└── streamlit_UI/             # Streamlit dashboard for visualization
+└── streamlit_UI/            
     ├── app.py
     ├── Dockerfile
     └── requirements.txt
@@ -40,8 +40,8 @@ Uses Kafka producer to publish news data to topics and Spark consumer to process
 3. **Data Storage with Cassandra**
 Processed news is stored in Cassandra tables for fast retrieval and query performance.
 
-4. **Visualization Dashboard**
-Streamlit UI to view real-time news data, with filtering by category or source.
+4. **News Viewer**
+Streamlit provides a simple interface to browse news articles in real time, with the ability to filter by category or source.
 
 5. **Containerized Deployment**
 Docker and docker-compose used to orchestrate services for easy setup and scalability.
@@ -64,8 +64,8 @@ Docker and docker-compose used to orchestrate services for easy setup and scalab
 
 4. **Streamlit UI**
 
-    * Connects to Cassandra.
-    * Displays real-time news in a user-friendly dashboard.
+    * Connects to Cassandra and displays real-time news articles.
+    * Users can browse news by category (e.g., Health, Entertainment).
 ## How To Run 
 1. **Clone the repository** to your local machine.
 2. **Run all services** with Docker Compose: 
@@ -96,7 +96,7 @@ docker exec -it cassandra cqlsh
 * You should see your news data:
 ![News data in Cassandra](images/cassandra.png)
 ![Number of columns in Cassandra table](images/cassandra_count_columns.png)
-6. **View the Streamlit dashboard**:
+6. **View News in Streamlit**:
 Open your browser at ``http://localhost:8501/`` to see real-time news data:
 ![Health category news in Streamlit UI](images/health.png)
 ![Entertainment category news in Streamlit UI](images/entertainment.png)
