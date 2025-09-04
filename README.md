@@ -1,5 +1,7 @@
 # Real-Time News Pipeline
 This project implements a **Real-Time News Pipeline** that continuously extracts news articles from an API, streams them via Kafka, processes them using Apache Spark, stores the structured data in Cassandra, and visualizes the results with a Streamlit dashboard. It demonstrates a complete end-to-end real-time data engineering workflow, combining ingestion, streaming, processing, storage, and visualization in one integrated system.
+## Project Architect 
+![Docker containers running](images/System_design.gif)
 ## Project Structure
 ```bash
 bassamoh32-realtime-news-pipeline/
