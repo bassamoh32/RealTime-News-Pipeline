@@ -1,0 +1,5 @@
+HOST: "cassandra"
+KEYSPACE: "news_keyspace"
+TABLE: "news_table"
+USERNAME: "admin"
+PASSWORD: "admin"

@@ -1,0 +1,5 @@
+kafka-python==2.2.0
+python-dotenv==0.19.2
+requests
+PyYAML==6.0.2
+six

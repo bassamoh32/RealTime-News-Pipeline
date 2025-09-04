@@ -1,0 +1,152 @@
+networks:
+  net:
+      driver: bridge
+      ipam:
+          driver: default
+          config:
+            - subnet: "172.19.0.0/16"
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8.1
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    networks:
+      net:
+        ipv4_address: 172.19.0.2
+
+  kafka:
+    image: bitnami/kafka:3.6.1
+    container_name: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      net:
+        ipv4_address: 172.19.0.3
+
+  # spark-master:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: spark-master
+  #   hostname: spark-master
+  #   user: root
+  #   volumes:
+  #     - ./spark/checkpoint:/tmp/checkpoint
+  #     - ./spark/utils:/opt/bitnami/spark/utils
+  #     - ./cassandra_utils:/opt/bitnami/spark/utils/cassandra_utils
+  #     - ./configuration:/opt/bitnami/spark/utils/configuration
+  #   ports:
+  #     - '8080:8080'
+  #     - '7077:7077'
+  #   networks:
+  #     net:
+  #       ipv4_address: 172.19.0.4
+
+  # spark-worker1:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: spark-worker1
+  #   hostname: spark-worker1
+  #   user: root
+  #   ports:
+  #     - '8081:8081'
+  #   depends_on:
+  #     - spark-master
+  #   environment:
+  #     - MASTER_URL=spark://spark-master:7077
+  #     - SPARK_MODE=worker
+  #     - SPARK_WORKER_MEMORY=1G
+  #     - SPARK_WORKER_CORES=1
+  #   networks:
+  #     net:
+  #       ipv4_address: 172.19.0.5
+
+  # spark-worker2:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: spark-worker2
+  #   hostname: spark-worker2
+  #   user: root
+  #   ports:
+  #     - '8082:8081'
+  #   depends_on:
+  #     - spark-master
+  #   environment:
+  #     - MASTER_URL=spark://spark-master:7077
+  #     - SPARK_MODE=worker
+  #     - SPARK_WORKER_MEMORY=1G
+  #     - SPARK_WORKER_CORES=1
+  #   networks:
+  #     net:
+  #       ipv4_address: 172.19.0.6
+      
+  kafka-producer:
+    build:
+      context: ./kafka
+      dockerfile: Dockerfile
+    container_name: kafka_producer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./configuration:/app/configuration
+      - ./kafka:/app
+      - ./.env:/app/.env
+    networks:
+      net:
+        ipv4_address: 172.19.0.7
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092  
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - kafka
+    networks:
+      net:
+        ipv4_address: 172.19.0.8
+  # cassandra:
+  #   image: cassandra:4.1.3
+  #   container_name: cassandra
+  #   hostname: cassandra
+  #   ports:
+  #     - "9042:9042"
+  #   volumes:
+  #     - cassandra_data:/var/lib/cassandra
+  #   networks:
+  #     net:
+  #       ipv4_address: 172.19.0.9
+  # streaming-app:
+  #   build:
+  #     context: ./streamlit_UI
+  #     dockerfile: Dockerfile
+  #   container_name: streamlit_app
+  #   depends_on:
+  #       - spark-master
+  #       - cassandra
+  #       - kafka
+  #   volumes:
+  #     - ./streamlit_UI:/app
+  #     - ./configuration:/app/configuration
+  #   ports:
+  #     - "8501:8501"
+  #   networks:
+  #     net:
+  #       ipv4_address: 172.19.0.10
+volumes:
+  cassandra_data:

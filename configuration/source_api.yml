@@ -1,0 +1,9 @@
+NEWS_API_URL : https://newsapi.org/v2/top-headlines
+CATEGORIES :
+    - sports
+    - business
+    - entertainment
+    - health
+    - science
+    - technology
+    - general
