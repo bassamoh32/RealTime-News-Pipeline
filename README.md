@@ -87,6 +87,7 @@ docker exec -it spark-master bash
 utils/spark_startup.sh
 ```
 This creates the Cassandra keyspace and table, then consumes news from the Kafka topic (news) and inserts it into Cassandra.
+
 5. **Verify data in Cassandra**:
 * Enter Cassandra container:
 ```bash 
