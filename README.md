@@ -1,5 +1,5 @@
 # Real-Time News Pipeline
-This project is a **Real-Time News Pipeline** that extracts news articles from an API, streams them using Kafka, processes the data with Apache Spark, stores it in Cassandra, and visualizes it via a Streamlit dashboard. It is designed to demonstrate a full end-to-end real-time data engineering workflow.
+This project implements a **Real-Time News Pipeline** that continuously extracts news articles from an API, streams them via Kafka, processes them using Apache Spark, stores the structured data in Cassandra, and visualizes the results with a Streamlit dashboard. It demonstrates a complete end-to-end real-time data engineering workflow, combining ingestion, streaming, processing, storage, and visualization in one integrated system.
 ## Project Structure
 ```bash
 bassamoh32-realtime-news-pipeline/
@@ -66,3 +66,36 @@ Docker and docker-compose used to orchestrate services for easy setup and scalab
 
     * Connects to Cassandra.
     * Displays real-time news in a user-friendly dashboard.
+## How To Run 
+1. **Clone the repository** to your local machine.
+2. **Run all services** with Docker Compose: 
+```bash 
+docker compose up --build 
+```
+3. **Verify services** are running:
+```bash
+docker ps
+``` 
+![Docker containers running](images/docker_containers.png)
+4. **Run the Spark job**:
+* Enter the Spark container:
+```bash
+docker exec -it spark-master bash
+```
+* Start the Spark consumer:
+```bash
+utils/spark_startup.sh
+```
+This creates the Cassandra keyspace and table, then consumes news from the Kafka topic (news) and inserts it into Cassandra.
+5. **Verify data in Cassandra**:
+* Enter Cassandra container:
+```bash 
+docker exec -it cassandra cqlsh
+```
+* You should see your news data:
+![News data in Cassandra](images/cassandra.png)
+![Number of columns in Cassandra table](images/cassandra_count_columns.png)
+6. **View the Streamlit dashboard**:
+Open your browser at ``http://localhost:8501/`` to see real-time news data:
+![Health category news in Streamlit UI](images/health.png)
+![Entertainment category news in Streamlit UI](images/entertainment.png)
